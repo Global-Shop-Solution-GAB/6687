@@ -1,0 +1,360 @@
+﻿Program.Sub.ScreenSU.Start
+Gui.Form..Create(BaseForm)
+Gui.Form..Caption("GCG 6757 EDI Convertor")
+Gui.Form..Size(274,452)
+Gui.Form..MinX(0)
+Gui.Form..MinY(0)
+Gui.Form..Position(0,0)
+Gui.Form..AlwaysOnTop(False)
+Gui.Form..FontName("Tahoma")
+Gui.Form..FontSize(8.25)
+Gui.Form..ControlBox(True)
+Gui.Form..MaxButton(True)
+Gui.Form..MinButton(True)
+Gui.Form..MousePointer(0)
+Gui.Form..Moveable(True)
+Gui.Form..Sizeable(True)
+Gui.Form..ShowInTaskBar(True)
+Gui.Form..TitleBar(True)
+Gui.Form..Event(UnLoad,Form_UnLoad)
+Gui.Form.frame1.Create(Frame)
+Gui.Form.frame1.Enabled(True)
+Gui.Form.frame1.Visible(True)
+Gui.Form.frame1.Zorder(0)
+Gui.Form.frame1.Size(266,382)
+Gui.Form.frame1.Position(5,5)
+Gui.Form.frame1.Caption("Column Settings")
+Gui.Form.frame1.FontName("Tahoma")
+Gui.Form.frame1.FontSize(8.25)
+Gui.Form.frame1.BorderStyle(1)
+Gui.Form.frame1.Anchor(15)
+Gui.Form.lbl1.Create(Label,"Number of Columns",True,93,13,0,5,36,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl1.BorderStyle(0)
+Gui.Form.lbl1.Parent("frame1")
+Gui.Form.txtCol.Create(TextBox,"",True,100,20,0,154,32,True,0,"Tahoma",8.25,,1)
+Gui.Form.txtCol.Parent("frame1")
+Gui.Form.txtCol.NumericOnly(2)
+Gui.Form.txtCol.Anchor(9)
+Gui.Form.lbl2.Create(Label,"Number of Data Columns",True,119,13,0,5,60,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl2.BorderStyle(0)
+Gui.Form.lbl2.Parent("frame1")
+Gui.Form.txtDataCol.Create(TextBox,"",True,100,20,0,154,56,True,0,"Tahoma",8.25,,1)
+Gui.Form.txtDataCol.Parent("frame1")
+Gui.Form.txtDataCol.NumericOnly(2)
+Gui.Form.txtDataCol.Anchor(9)
+Gui.Form.frame2.Create(Frame)
+Gui.Form.frame2.Enabled(False)
+Gui.Form.frame2.Visible(True)
+Gui.Form.frame2.Zorder(0)
+Gui.Form.frame2.Size(253,93)
+Gui.Form.frame2.Position(5,128)
+Gui.Form.frame2.Caption("")
+Gui.Form.frame2.FontName("Tahoma")
+Gui.Form.frame2.FontSize(8.25)
+Gui.Form.frame2.Parent("frame1")
+Gui.Form.frame2.Anchor(13)
+Gui.Form.frame2.BorderStyle(3)
+Gui.Form.lbl3.Create(Label,"Number of End Char",True,97,13,0,5,10,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl3.BorderStyle(0)
+Gui.Form.lbl3.Parent("frame2")
+Gui.Form.txtEndChar.Create(TextBox,"",True,100,20,0,148,6,True,0,"Tahoma",8.25,,1)
+Gui.Form.txtEndChar.NumericOnly(2)
+Gui.Form.txtEndChar.Parent("frame2")
+Gui.Form.txtEndChar.Anchor(9)
+Gui.Form.lbl4.Create(Label,"Date Format Char",True,86,13,0,5,36,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl4.BorderStyle(0)
+Gui.Form.lbl4.Parent("frame2")
+Gui.Form.txtDateFormat.Create(TextBox,"",True,100,20,0,148,32,True,0,"Tahoma",8.25,,1)
+Gui.Form.txtDateFormat.Parent("frame2")
+Gui.Form.txtDateFormat.Anchor(9)
+Gui.Form.lbl9.Create(Label,"Grouping Column",True,81,13,0,5,64,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl9.BorderStyle(0)
+Gui.Form.lbl9.Parent("frame2")
+Gui.Form.txtGroupCol.Create(TextBox,"",True,100,20,0,148,60,False,0,"Tahoma",8.25,,1)
+Gui.Form.txtGroupCol.Parent("frame2")
+Gui.Form.txtGroupCol.NumericOnly(2)
+Gui.Form.txtGroupCol.Anchor(9)
+Gui.Form.chkDateHeader.Create(CheckBox)
+Gui.Form.chkDateHeader.Enabled(True)
+Gui.Form.chkDateHeader.Visible(True)
+Gui.Form.chkDateHeader.Zorder(0)
+Gui.Form.chkDateHeader.Size(248,20)
+Gui.Form.chkDateHeader.Position(5,82)
+Gui.Form.chkDateHeader.Caption("Date in Column Header")
+Gui.Form.chkDateHeader.FontName("Tahoma")
+Gui.Form.chkDateHeader.FontSize(8.25)
+Gui.Form.chkDateHeader.Parent("frame1")
+Gui.Form.chkDateHeader.Event(Change,chkDateHeader_Change)
+Gui.Form.chkFirmPlan.Create(CheckBox)
+Gui.Form.chkFirmPlan.Enabled(True)
+Gui.Form.chkFirmPlan.Visible(True)
+Gui.Form.chkFirmPlan.Zorder(0)
+Gui.Form.chkFirmPlan.Size(248,20)
+Gui.Form.chkFirmPlan.Position(5,229)
+Gui.Form.chkFirmPlan.Caption("Combination of Firm and Planned Orders")
+Gui.Form.chkFirmPlan.FontName("Tahoma")
+Gui.Form.chkFirmPlan.FontSize(8.25)
+Gui.Form.chkFirmPlan.Parent("frame1")
+Gui.Form.chkFirmPlan.Event(Change,chkFirmPlan_Change)
+Gui.Form.frame3.Create(Frame)
+Gui.Form.frame3.Enabled(False)
+Gui.Form.frame3.Visible(True)
+Gui.Form.frame3.Zorder(0)
+Gui.Form.frame3.Size(253,102)
+Gui.Form.frame3.Position(5,274)
+Gui.Form.frame3.Caption("")
+Gui.Form.frame3.FontName("Tahoma")
+Gui.Form.frame3.FontSize(8.25)
+Gui.Form.frame3.Parent("frame1")
+Gui.Form.frame3.Anchor(15)
+Gui.Form.frame3.BorderStyle(3)
+Gui.Form.lbl5.Create(Label,"Firm Orders",True,56,13,0,5,11,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl5.BorderStyle(0)
+Gui.Form.lbl5.Parent("frame3")
+Gui.Form.txtFirmedCol.Create(TextBox,"",True,100,20,0,148,6,True,0,"Tahoma",8.25,,1)
+Gui.Form.txtFirmedCol.Parent("frame3")
+Gui.Form.txtFirmedCol.Anchor(9)
+Gui.Form.lbl6.Create(Label,"Specific Day",True,58,13,0,5,33,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl6.BorderStyle(0)
+Gui.Form.lbl6.Parent("frame3")
+Gui.Form.txtFirmDay.Create(TextBox,"",True,100,20,0,148,30,False,0,"Tahoma",8.25,,1)
+Gui.Form.txtFirmDay.NumericOnly(2)
+Gui.Form.txtFirmDay.Parent("frame3")
+Gui.Form.txtFirmDay.Anchor(9)
+Gui.Form.lbl7.Create(Label,"Planned Orders",True,74,13,0,5,59,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl7.BorderStyle(0)
+Gui.Form.lbl7.Parent("frame3")
+Gui.Form.txtPlannedOrders.Create(TextBox,"",True,100,20,0,148,54,True,0,"Tahoma",8.25,,1)
+Gui.Form.txtPlannedOrders.Parent("frame3")
+Gui.Form.txtPlannedOrders.Anchor(9)
+Gui.Form.lbl8.Create(Label,"Specific Day",True,58,13,0,5,81,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl8.BorderStyle(0)
+Gui.Form.lbl8.Parent("frame3")
+Gui.Form.txtPlanDay.Create(TextBox,"",True,100,20,0,148,78,False,0,"Tahoma",8.25,,1)
+Gui.Form.txtPlanDay.NumericOnly(2)
+Gui.Form.txtPlanDay.Parent("frame3")
+Gui.Form.txtPlanDay.Anchor(9)
+Gui.Form.chkFPDay.Create(CheckBox)
+Gui.Form.chkFPDay.Enabled(False)
+Gui.Form.chkFPDay.Visible(True)
+Gui.Form.chkFPDay.Zorder(0)
+Gui.Form.chkFPDay.Size(248,20)
+Gui.Form.chkFPDay.Position(5,251)
+Gui.Form.chkFPDay.Caption("Set Specific Day for Firm and Planned")
+Gui.Form.chkFPDay.FontName("Tahoma")
+Gui.Form.chkFPDay.FontSize(8.25)
+Gui.Form.chkFPDay.Parent("frame1")
+Gui.Form.chkFPDay.Event(Change,chkFPDay_Change)
+Gui.Form.chkDateGroup.Create(CheckBox)
+Gui.Form.chkDateGroup.Enabled(False)
+Gui.Form.chkDateGroup.Visible(True)
+Gui.Form.chkDateGroup.Zorder(0)
+Gui.Form.chkDateGroup.Size(248,20)
+Gui.Form.chkDateGroup.Position(5,103)
+Gui.Form.chkDateGroup.Caption("Date in Column Header in each Group")
+Gui.Form.chkDateGroup.FontName("Tahoma")
+Gui.Form.chkDateGroup.FontSize(8.25)
+Gui.Form.chkDateGroup.Parent("frame1")
+Gui.Form.chkDateGroup.Event(Change,chkDateGroup_Change)
+Gui.Form.cmdSave.Create(Button)
+Gui.Form.cmdSave.Enabled(True)
+Gui.Form.cmdSave.Visible(True)
+Gui.Form.cmdSave.Zorder(0)
+Gui.Form.cmdSave.Size(75,23)
+Gui.Form.cmdSave.Position(193,392)
+Gui.Form.cmdSave.Caption("Save")
+Gui.Form.cmdSave.FontName("Tahoma")
+Gui.Form.cmdSave.FontSize(8.25)
+Gui.Form.cmdSave.Anchor(9)
+Gui.Form.cmdSave.Event(Click,cmdSave_Click)
+Gui.Form.ddlProfile.Create(DropDownList)
+Gui.Form.ddlProfile.Enabled(True)
+Gui.Form.ddlProfile.Visible(True)
+Gui.Form.ddlProfile.Zorder(0)
+Gui.Form.ddlProfile.Size(100,20)
+Gui.Form.ddlProfile.Position(46,394)
+Gui.Form.ddlProfile.FontName("Tahoma")
+Gui.Form.ddlProfile.FontSize(8.25)
+Gui.Form.ddlProfile.Event(Change,ddlProfile_Change)
+Gui.Form.lbl10.Create(Label,"Profile",True,30,13,0,10,398,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl10.BorderStyle(0)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+Function.Intrinsic.UI.UsePixels ' Allows you to use Pixels instead of Twips throughout
+f.ODBC.Connection!con.OpenCompanyConnection
+	f.Data.Dictionary.CreateFromSQL("dictProf", "con", "Select Distinct ProjectName, ProjectName from GCG_5523_EDI_OPTIONS")
+	gui.Form.ddlProfile.AddItems("Dictionary", "dictProf")
+	f.Data.Dictionary.Close("dictProf")
+f.ODBC.Connection!con.Close
+gui.Form..Show
+Program.Sub.Main.End
+
+Program.Sub.chkDateHeader_Change.Start
+f.Intrinsic.Control.Try
+	f.Intrinsic.Control.If(v.Screen.Form!chkDateHeader.Value, =, 1)
+		'Activate date Frame
+		gui.Form.chkDateGroup.Enabled(True)
+		gui.Form.frame2.Enabled(True)
+	f.Intrinsic.Control.Else
+		'Deactivate date Frame
+		gui.Form.chkDateGroup.Enabled(False)
+		gui.Form.frame2.Enabled(False)
+	f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.chkDateHeader_Change.End
+
+Program.Sub.chkDateGroup_Change.Start
+f.Intrinsic.Control.Try
+	f.Intrinsic.Control.If(v.Screen.Form!chkDateGroup.Value, =, 1)
+		'Activate date Frame
+		gui.Form.txtGroupCol.Enabled(True)
+	f.Intrinsic.Control.Else
+		'Deactivate date Frame
+		gui.Form.txtGroupCol.Enabled(False)
+	f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.chkDateGroup_Change.End
+
+Program.Sub.chkFirmPlan_Change.Start
+f.Intrinsic.Control.Try
+	f.Intrinsic.Control.If(v.Screen.Form!chkFirmPlan.Value, =, 1)
+		'Activate Firm Plan
+		gui.Form.chkFPDay.Enabled(True)
+		gui.Form.frame3.Enabled(True)
+	f.Intrinsic.Control.Else
+		'Deactivate Firm Plan
+		gui.Form.chkFPDay.Enabled(False)
+		gui.Form.frame3.Enabled(False)
+	f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.chkFirmPlan_Change.End
+
+Program.Sub.chkFPDay_Change.Start
+f.Intrinsic.Control.Try
+	f.Intrinsic.Control.If(v.Screen.Form!chkFPDay.Value, =, 1)
+		'Activate Week Day
+		gui.Form.txtFirmDay.Enabled(True)
+		gui.Form.txtPlanDay.Enabled(True)
+	f.Intrinsic.Control.Else
+		'Deactivate Week Day
+		gui.Form.txtFirmDay.Enabled(False)
+		gui.Form.txtPlanDay.Enabled(False)
+	f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.chkFPDay_Change.End
+
+Program.Sub.cmdSave_Click.Start
+v.Local.iNumCol.Declare
+v.Local.iDataCol.Declare
+v.Local.iDateColHeader.Declare
+v.Local.iDateColHeaderGroup.Declare
+v.Local.iNumEndChar.Declare
+v.Local.sDateFormat.Declare
+v.Local.iGoupingCol.Declare
+v.Local.iFP.Declare
+v.Local.iDayFP.Declare
+v.Local.sFirm.Declare
+v.Local.iFDay.Declare
+v.Local.sPlan.Declare
+v.Local.iPDay.Declare
+v.Local.sProfile.Declare
+
+v.Local.sSQL.Declare
+f.Intrinsic.Control.Try
+	'Set Values
+	v.Local.iNumCol.Set(v.Screen.Form!txtCol.Text)
+	v.Local.iDataCol.Set(v.Screen.Form!txtDataCol.Text)
+	v.Local.iDateColHeader.Set(v.Screen.Form!chkDateHeader.Text)
+	v.Local.iDateColHeaderGroup.Set(v.Screen.Form!chkDateGroup.Text)
+	v.Local.iNumEndChar.Set(v.Screen.Form!txtEndChar.Text)
+	v.Local.sDateFormat.Set(v.Screen.Form!txtDateFormat.Text)
+	v.Local.iGoupingCol.Set(v.Screen.Form!txtGroupCol.Text)
+	v.Local.iFP.Set(v.Screen.Form!chkFirmPlan.Text)
+	v.Local.iDayFP.Set(v.Screen.Form!chkFPDay.Text)
+	v.Local.sFirm.Set(v.Screen.Form!txtFirmedCol.Text)
+	v.Local.iFDay.Set(v.Screen.Form!txtFirmDay.Text)
+	v.Local.sPlan.Set(v.Screen.Form!txtPlannedOrders.Text)
+	v.Local.iPDay.Set(v.Screen.Form!txtPlanDay.Text)
+	v.Local.sProfile.Set(v.Screen.Form!ddlProfile.Text)
+	
+	'Delete and Insert
+	f.ODBC.Connection!con.OpenCompanyConnection
+		f.Intrinsic.String.Build("Delete From GCG_6757_Settings Where Profile = '{0}'", v.Local.sProfile, v.Local.sSQL)
+		'v.Local.sSQL.Set("Delete From GCG_6757_Settings")
+		f.ODBC.Connection!con.Execute(v.Local.sSQL)
+		'Insert
+		f.Intrinsic.String.Build("Insert into  GCG_6757_Settings Values ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')", v.Local.iNumCol, v.Local.iDataCol, v.Local.iDateColHeader, v.Local.iDateColHeaderGroup, v.Local.iNumEndChar, v.Local.sDateFormat, v.Local.iGoupingCol, v.Local.iFP, v.Local.iDayFP, v.Local.sFirm, v.Local.iFDay, v.Local.sPlan, v.Local.iPDay, v.Local.sProfile, v.Local.sSQL)
+		'f.Intrinsic.String.Build("Insert into  GCG_6757_Settings Values ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}')", v.Local.iNumCol, v.Local.iDataCol, v.Local.iDateColHeader, v.Local.iDateColHeaderGroup, v.Local.iNumEndChar, v.Local.sDateFormat, v.Local.iGoupingCol, v.Local.iFP, v.Local.iDayFP, v.Local.sFirm, v.Local.iFDay, v.Local.sPlan, v.Local.iPDay, v.Local.sSQL)
+		f.ODBC.Connection!con.Execute(v.Local.sSQL)
+	f.ODBC.Connection!con.Close
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.cmdSave_Click.End
+
+Program.Sub.ErrorMsg.Start
+v.Local.sError.Declare
+
+'Generic Error message.
+f.Intrinsic.String.Build("Project GCG_6757_MAINT.g2u {0}{0}Subroutine: {1}{0}Error: {2} with Description: {3}", v.Ambient.NewLine, v.Args.CurrentSub, v.Ambient.ErrorNumber, v.Ambient.ErrorDescription, v.Local.sError)
+f.Intrinsic.UI.Msgbox(v.Local.sError)
+Program.Sub.ErrorMsg.End
+
+Program.Sub.Form_UnLoad.Start
+f.Intrinsic.Control.Try
+	'End Program.
+	f.Intrinsic.Control.End
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.Form_UnLoad.End
+
+Program.Sub.ddlProfile_Change.Start
+v.Local.sSQL.Declare
+f.Intrinsic.Control.Try
+	f.ODBC.Connection!con.OpenCompanyConnection
+		f.Intrinsic.String.Build("Select Top 1 * from GCG_6757_Settings where Profile = '{0}'", v.Screen.Form!ddlProfile.Text, v.Local.sSQL)
+		f.Data.Datatable.CreateFromSQL("dtSettings", "con", v.Local.sSQL)
+	f.ODBC.Connection!con.Close
+	'Check 1 result
+	f.Intrinsic.Control.If(v.DataTable.dtSettings.RowCount, <>, 1)
+		f.Data.Datatable.Close("dtSettings")
+		f.Intrinsic.Control.ExitSub
+	f.Intrinsic.Control.EndIf
+	'Set Values
+	gui.Form.txtCol.Text(v.DataTable.dtSettings(0).ColNum!FieldVal)
+	gui.Form.txtDataCol.Text(v.DataTable.dtSettings(0).DataColNum!FieldVal)
+	gui.Form.chkDateHeader.Value(v.DataTable.dtSettings(0).DateHeader!FieldVal)
+	gui.Form.chkDateGroup.Value(v.DataTable.dtSettings(0).DateGroup!FieldVal)
+	gui.Form.txtEndChar.Text(v.DataTable.dtSettings(0).EndCharNum!FieldVal)
+	gui.Form.txtDateFormat.Text(v.DataTable.dtSettings(0).DateFormat!FieldValTrim)
+	gui.Form.txtGroupCol.Text(v.DataTable.dtSettings(0).GroupCol!FieldVal)
+	gui.Form.chkFirmPlan.Value(v.DataTable.dtSettings(0).FirmPlan!FieldVal)
+	gui.Form.chkFPDay.Value(v.DataTable.dtSettings(0).FPDAY!FieldVal)
+	gui.Form.txtFirmedCol.Text(v.DataTable.dtSettings(0).FirmCol!FieldValTrim)
+	gui.Form.txtFirmDay.Text(v.DataTable.dtSettings(0).FirmDay!FieldVal)
+	gui.Form.txtPlannedOrders.Text(v.DataTable.dtSettings(0).PlanCol!FieldVal)
+	gui.Form.txtPlanDay.Text(v.DataTable.dtSettings(0).PlanDay!FieldVal)
+	'Close
+	f.Data.Datatable.Close("dtSettings")
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.ddlProfile_Change.End
+
+Program.Sub.Comments.Start
+${$5$}$3.0.0.0$}$1
+${$6$}$aanazco$}$20220526012659185$}$7aQAV3Tor/tR9bkuakHbuzQlHVuXCGOzXYdb4iJi8O2zYz4nSsGRpmBbf+uFuLCjvE/CEL6DxZw=
+Program.Sub.Comments.End

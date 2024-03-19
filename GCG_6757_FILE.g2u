@@ -1,0 +1,260 @@
+﻿Program.Sub.Preflight.Start
+v.Global.sCsvLocFile.Declare
+v.Global.sEdiDestFolder.Declare
+v.Global.sProject.Declare
+v.Global.sProfile.Declare
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+f.Intrinsic.Control.Try
+	Function.Intrinsic.UI.UsePixels ' Allows you to use Pixels instead of Twips throughout
+	v.Global.sProfile.Set("Standard")
+	f.Intrinsic.UI.InvokeWaitDialog("File Processing...")
+	f.Intrinsic.Control.CallSub(checkCustomFolder)
+	f.Intrinsic.Control.CallSub(loadGlobalVariables)
+	f.Intrinsic.Control.CallSub(loadProject)
+	f.Intrinsic.Control.CallSub(loadCSV)
+	f.Intrinsic.ui.CloseWaitDialog
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+
+Program.Sub.Main.End
+
+Program.Sub.checkCustomFolder.Start
+v.Local.sFolder.Declare
+v.Local.bExists.Declare
+f.Intrinsic.Control.Try
+	f.Intrinsic.String.Build("{0}\EDI\GCG_6757\", v.Caller.GlobalDir, v.Local.sFolder)
+	f.Intrinsic.File.DirExists(v.Local.sFolder, v.Local.bExists)
+	f.Intrinsic.Control.If(v.Local.bExists.Not)
+		f.Intrinsic.File.CreateDir(v.Local.sFolder)
+	f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.checkCustomFolder.End
+
+Program.Sub.loadGlobalVariables.Start
+v.Local.sSQL.Declare
+f.Intrinsic.Control.Try
+'Getting the record from GCG_5523_PROFILES Table. Records with 'R' are master records for reading only. Record with 'W' are created by the input script with the variables needed for the program to run, should be deleted at the end.
+	f.ODBC.Connection!con.OpenCompanyConnection
+		f.Intrinsic.String.Build("select * from GCG_5523_PROFILES where ProfileName = '{0}' and RecordType = 'W' and GssUsername = '{1}' and Terminal = '{2}'", v.Global.sProfile, v.Caller.User, v.Caller.Terminal, v.Local.sSQL)
+		f.Data.DataTable.CreateFromSQL("ediProfileDT", "con", v.Local.sSQL)
+	f.ODBC.Connection!con.Close	
+	'If theres one record 'W', set the global variables. If theres no records means the inputScript didn't work properly and if there's multiple means the formatScript is not deleting record 'W'
+	f.Intrinsic.Control.If(v.DataTable.ediProfileDT.RowCount, =, 1)
+		v.Global.sCsvLocFile.Set(v.DataTable.ediProfileDT(0).CSV_LocFile!FieldValTrim)
+		v.Global.sEdiDestFolder.Set(v.DataTable.ediProfileDT(0).EDI_DestFolder!FieldValTrim)
+		v.Global.sProject.Set(v.DataTable.ediProfileDT(0).ProjectToUse!FieldValTrim)
+	f.Intrinsic.Control.ElseIf(v.DataTable.ediProfileDT.RowCount, =, 0)
+		f.Intrinsic.UI.Msgbox("No Record Found, Please Try Again.")
+		f.Intrinsic.Control.End
+	f.Intrinsic.Control.ElseIf(v.DataTable.ediProfileDT.RowCount, >, 1)
+		f.Intrinsic.UI.Msgbox("Multiple Records Found, Please Review PSQL Records.")
+		f.Intrinsic.Control.End
+	f.Intrinsic.Control.EndIf
+	'Once the global variables are set, there's no more need for this table.
+	f.Data.DataTable.Close("ediProfileDT")
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.loadGlobalVariables.End
+
+Program.Sub.loadProject.Start
+v.Local.sSQL.Declare
+f.Intrinsic.Control.Try
+	'gettin the profile specified in Record 'W' 
+	f.ODBC.Connection!con.OpenCompanyConnection
+		f.Intrinsic.String.Build("select * from GCG_6757_FP_EDI_FILE where PROFILE = '{0}'", v.Global.sProject, v.Local.sSQL)
+		f.Data.DataTable.CreateFromSQL("ediProfileDT", "con", v.Local.sSQL, true)
+	f.ODBC.Connection!con.Close	
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.loadProject.End
+
+Program.Sub.loadCSV.Start
+v.Local.sRet.Declare
+v.Local.sRetLines.Declare
+v.Local.sRetCol.Declare
+v.Local.iCnt.Declare
+v.Local.iCnt2.Declare
+v.Local.iCnt3.Declare
+v.Local.sColName.Declare
+v.Local.sFilter.Declare
+v.Local.sCopyFile.Declare
+v.Local.sTitles.Declare
+v.Local.sTypes.Declare
+
+v.Local.sTemp.Declare
+v.Local.bBuffer.Declare
+v.Local.sDate.Declare
+v.Local.iWeekDay.Declare
+v.Local.dOrder.Declare
+v.Local.sFP.Declare
+
+v.Local.sMonth.Declare
+v.Local.sDay.Declare
+v.Local.sYear.Declare
+
+v.Local.iQty.Declare
+v.Local.sTest.Declare
+f.Intrinsic.Control.Try
+	'get file.
+	f.Intrinsic.File.File2String(v.Global.sCsvLocFile, v.Local.sRet)
+	'Get File Backup loc
+	f.Intrinsic.File.GetFileNameFromFQN(v.Global.sCsvLocFile, v.Local.sCopyFile)
+	f.Intrinsic.String.Build("{0}\EDI\GCG_6757\{1}", v.Caller.GlobalDir, v.Local.sCopyFile, v.Local.sCopyFile)
+	'Copy File
+	f.Intrinsic.File.CopyOpenFile(v.Global.sCsvLocFile, v.Local.sCopyFile)
+	'Create Cols
+	'f.Data.Datatable.Create("dtFile", True)
+	f.Intrinsic.Control.For(v.Local.iCnt, 1, 59, 1)
+		'Create Name
+		f.Intrinsic.String.Build("H{0}", v.Local.iCnt, v.Local.sColName)
+		'f.Data.Datatable.AddColumn("dtFile", v.Local.sColName, "String")
+		'Add to Names
+		f.Intrinsic.Control.If(v.Local.sTitles.Trim, =, "")
+			v.Local.sTitles.Set(v.Local.sColName)
+			v.Local.sTypes.Set("String")
+		f.Intrinsic.Control.Else
+			f.Intrinsic.String.Build("{0}*!*{1}", v.Local.sTitles, v.Local.sColName, v.Local.sTitles)
+			f.Intrinsic.String.Build("{0}*!*String", v.Local.sTypes, v.Local.sTypes)
+		f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	'Add Text
+	f.Intrinsic.File.File2String(v.Global.sCsvLocFile, 6, v.Local.sTest)
+	'Function.Intrinsic.String.RegExReplace(v.Local.sTest, "\xA0", "", True, True, v.Local.sTest)
+	f.Intrinsic.String.DecodeUTF8(v.Local.sTest, v.Local.sTest)
+	f.Intrinsic.String.Replace(v.Local.sTest, "?", "", v.Local.sTest)
+	'f.Intrinsic.String.Replace(v.Local.sTest, "\u00A0", "", v.Local.sTest)
+	f.Data.Datatable.CreateFromString("dtFile", v.Local.sTest, v.Local.sTitles, v.Local.sTypes, ",", v.Ambient.NewLine, True)
+	'f.Data.Datatable.CreateFromCSV("dtFile", v.Global.sCsvLocFile, v.Local.sTitles,  v.Local.sTypes, True)
+	f.Data.Datatable.DeleteRow("dtFile", 0)
+	f.Data.Datatable.AcceptChanges("dtFile")
+	'Create DV
+	f.Data.DataView.Create("dtFile", "dvFile", 22)
+	'Remove Blank columns at the end
+	f.Intrinsic.Control.For(v.Local.iCnt, v.DataTable.dtFile.RowCount--, 0, -1)
+		f.Intrinsic.Control.If(v.DataTable.dtFile(v.Local.iCnt).H1!FieldValTrim, =, "")
+			f.Data.Datatable.DeleteRow("dtFile", v.Local.iCnt)
+		f.Intrinsic.Control.ElseIf(v.DataTable.dtFile(v.Local.iCnt).H1!FieldValTrim, =, "GE Confidential")
+			f.Data.Datatable.DeleteRow("dtFile", v.Local.iCnt)
+		f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	'Create Cols for Export
+	f.Data.Datatable.Create("dtExport", True)
+	f.Intrinsic.Control.For(v.Local.iCnt, 1, 8, 1)
+		'Create Name
+		f.Intrinsic.String.Build("H{0}", v.Local.iCnt, v.Local.sColName)
+		f.Data.Datatable.AddColumn("dtExport", v.Local.sColName, "String")
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	f.Data.Datatable.AddColumn("dtExport", "FPType", "String")
+	f.Data.Datatable.AddColumn("dtExport", "DateCol", "String")
+	f.Data.Datatable.AddColumn("dtExport", "QtyCol", "String")
+	'Split on Schdule
+	f.Data.DataView.ToDataTableDistinct("dtFile", "dvFile", "dtSched", "H1")
+	'Loop Through H1
+	f.Intrinsic.Control.For(v.Local.iCnt, 0, v.DataTable.dtSched.RowCount--, 1)
+		'Filter.
+		f.Intrinsic.String.Build("H1 = '{0}'", v.DataTable.dtSched(v.Local.iCnt).H1!FieldValTrim, v.Local.sFilter)
+		f.Data.DataView.SetFilter("dtFile", "dvFile", v.Local.sFilter)
+		'Check if it has more than one
+		f.Intrinsic.Control.If(v.DataView.dtFile!dvFile.RowCount, >, 1)
+			f.Intrinsic.Control.For(v.Local.iCnt3, 1, v.DataView.dtFile!dvFile.RowCount--, 1)
+				'Change Dates
+				f.Intrinsic.Control.For(v.Local.iCnt2, 11, 59, 1)
+					'Check if Buffer
+					f.Intrinsic.String.Build("H{0}", v.Local.iCnt2, v.Local.sColName)
+					v.Local.sTemp.Set(v.DataView.dtFile!dvFile(0).[v.Local.sColName]!FieldValTrim)
+					f.Intrinsic.String.UCase(v.Local.sTemp, v.Local.sTemp)
+					f.Intrinsic.String.Trim(v.Local.sTemp, v.Local.sTemp)
+					f.Intrinsic.String.IsInString(v.Local.sTemp, "BUFFER", False, v.Local.bBuffer)
+					'Change Month to number				
+					f.Intrinsic.String.Replace(v.Local.sTemp, "JAN", "01", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "FEB", "02", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "MAR", "03", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "APR", "04", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "MAY", "05", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "JUN", "06", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "JUL", "07", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "AUG", "08", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "SEP", "09", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "OCT", "10", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "NOV", "11", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "DEC", "12", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, " ", "", v.Local.sTemp)
+					f.Intrinsic.String.Replace(v.Local.sTemp, "  ", "", v.Local.sTemp)
+					'Get Date
+					f.Intrinsic.Control.If(v.Local.bBuffer.Not)
+						f.Intrinsic.String.Left(v.Local.sTemp.Trim, 12, v.Local.sTemp)
+					f.Intrinsic.Control.EndIf
+					
+					f.Intrinsic.String.Right(v.Local.sTemp.Trim, 8, v.Local.sTemp)
+					'Year
+					f.Intrinsic.String.Right(v.Local.sTemp.Trim, 2, v.Local.sYear)
+					'Month
+					f.Intrinsic.String.Left(v.Local.sTemp.Trim, 5, v.Local.sDay)
+					f.Intrinsic.String.Right(v.Local.sDay, 2, v.Local.sMonth)
+					'Day
+					f.Intrinsic.String.Left(v.Local.sDay, 2, v.Local.sDay)
+					'Join
+					f.Intrinsic.String.Build("{0}/{1}/{2}", v.Local.sMonth, v.Local.sDay, v.Local.sYear, v.Local.sTemp)
+					'f.Intrinsic.String.Replace(v.Local.sTemp, "-", "/", v.Local.sTemp)
+					f.Intrinsic.Date.ConvertDString(v.Local.sTemp, "MM/DD/YY", v.Local.dOrder)
+					'gET wEEK
+					f.Intrinsic.Date.Weekday(v.Local.dOrder, v.Local.iWeekDay)
+					'If Buffer make it Friday
+					f.Intrinsic.Control.If(v.Local.bBuffer)					
+						'Make sure is firday
+						f.Intrinsic.Control.If(v.Local.iWeekDay, <>, 6)
+							f.Intrinsic.Math.Sub(6, v.Local.iWeekDay, v.Local.iWeekDay)
+							f.Intrinsic.Date.DateAdd("D", v.Local.iWeekDay, v.Local.dOrder, v.Local.dOrder)
+						f.Intrinsic.Control.EndIf
+						'Set Date
+						f.Intrinsic.String.Format(v.Local.dOrder, "MM/DD/YYYY", v.Local.sTemp)
+						'f.Data.DataView.SetValue("dtFile", "dvFile", 0, v.Local.sColName, v.Local.sTemp)
+						v.Local.sFP.Set("P")
+					f.Intrinsic.Control.Else
+						'else make it Monday
+						f.Intrinsic.Control.If(v.Local.iWeekDay, <>, 2)
+							f.Intrinsic.Math.Sub(6, v.Local.iWeekDay, v.Local.iWeekDay)
+							f.Intrinsic.Date.DateAdd("D", v.Local.iWeekDay, v.Local.dOrder, v.Local.dOrder)
+						f.Intrinsic.Control.EndIf
+						'Set Date
+						f.Intrinsic.String.Format(v.Local.dOrder, "MM/DD/YYYY", v.Local.sTemp)
+						'f.Data.DataView.SetValue("dtFile", "dvFile", 0, v.Local.sColName, v.Local.sTemp)
+						v.Local.sFP.Set("P")
+					f.Intrinsic.Control.EndIf
+					
+					v.Local.iQty.Set(v.DataView.dtFile!dvFile(v.Local.iCnt3).[v.Local.sColName]!FieldValTrim)
+					f.Intrinsic.Control.If(v.Local.iQty, <>, "0")
+						f.Intrinsic.Control.If(v.DataView.dtFile!dvFile(v.Local.iCnt3).H5!FieldValTrim, <>, "JEF")
+							'Add Line
+							f.Data.Datatable.AddRow("dtExport", "H1", v.DataView.dtFile!dvFile(v.Local.iCnt3).H1!FieldValTrim, "H2", v.DataView.dtFile!dvFile(v.Local.iCnt3).H2!FieldValTrim, "H3", v.DataView.dtFile!dvFile(v.Local.iCnt3).H3!FieldValTrim, "H4", v.DataView.dtFile!dvFile(v.Local.iCnt3).H4!FieldValTrim, "H5", v.DataView.dtFile!dvFile(v.Local.iCnt3).H5!FieldValTrim, "H6", v.DataView.dtFile!dvFile(v.Local.iCnt3).H6!FieldValTrim, "H7", v.DataView.dtFile!dvFile(v.Local.iCnt3).H7!FieldValTrim, "H8", v.DataView.dtFile!dvFile(v.Local.iCnt3).H8!FieldValTrim, "FPType", v.Local.sFP, "DateCol", v.Local.sTemp, "QtyCol", v.Local.iQty)
+						f.Intrinsic.Control.EndIf
+					f.Intrinsic.Control.EndIf
+				f.Intrinsic.Control.Next(v.Local.icnt2)
+			f.Intrinsic.Control.Next(v.Local.iCnt3)
+		f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	f.Data.Datatable.SaveToCSV("dtExport", v.Global.sCsvLocFile, True)
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.loadCSV.End
+
+Program.Sub.ErrorMsg.Start
+v.Local.sError.Declare
+f.Intrinsic.ui.CloseWaitDialog
+'Generic Error message.
+f.Intrinsic.String.Build("Project GCG_6757_File.g2u {0}{0}Subroutine: {1}{0}Error: {2} with Description: {3}", v.Ambient.NewLine, v.Args.CurrentSub, v.Ambient.ErrorNumber, v.Ambient.ErrorDescription, v.Local.sError)
+f.Intrinsic.UI.Msgbox(v.Local.sError)
+Program.Sub.ErrorMsg.End
+
+Program.Sub.Comments.Start
+${$5$}$3.0.0.0$}$1
+${$6$}$aanazco$}$20220916195243682$}$7aQAV3Tor/tR9bkuakHbuzQlHVuXCGOzGmdH6wkpI9VB5yiRukP3XcnbMh8XIDF9i1MS0veX2j8=
+Program.Sub.Comments.End
